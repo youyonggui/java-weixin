@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>后台管理系统</title>
+<link rel="stylesheet" type="text/css" href="js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/jquery.edatagrid.js"></script>
+<script type="text/javascript" src="http://www.jeasyui.com/easyui/datagrid-detailview.js"></script>
+
+<style>
+.easyui-propertygrid{
+	margin:auto;
+	}
+
+.pNews{
+	border:1px solid red;
+	color:red;
+	margin-bottom:6px;
+	width:80px;
+	border-radius:4px;
+	text-align:center;
+}
+
+.pNews:hover{
+	background-color:red;
+	color:white;
+	cursor:pointer;
+}
+.ddv{
+	color:blue;
+}
+.ddv:hover{
+	color:red;
+	font-weight: lighter;
+	
+}
+
+#submit{
+	margin-left:20px;
+	margin-top:10px;
+}
+
+textarea{
+	margin-left:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+<div>
+<!--  pagination="true" sortName="n_time" sortOrder="desc" title="新闻列表"
+            singleSelect="false" fitColumns="true" -->
+      <table id="newslist" style="width:100%;">
+    </table>
+</div>
+	<div id="pnp">
+		<div id="pndlg">
+				<form id="newsform"
+					action="../upload.do"
+					method="post" enctype="multipart/form-data" name="formdata">
+					<!-- 对表单进行封装 -->
+					<div>
+						<label for="name">标题:</label> <input class="easyui-validatebox"
+							type="text" size="50" maxlength="50" name="n_title"
+							data-options="required:true" style="width:550px;" />
+					</div>
+					<div>
+						<label for="name">图片:</label>
+						<input type="file" name="n_pitrue" style="width:300px"/>
+					</div>
+					<div>
+						<label for="name">内容:</label><br/>
+						<textarea name="n_content" class="easyui-validatebox"
+							data-options="required:true" style="width:550px;height:270px;"></textarea>
+					</div>
+					<a href="javascript:void(0)" class="easyui-linkbutton" id="submit" icon="icon-ok" onclick="sendForm(this)">发布</a>
+				<!--	<input type="button" name="sub" value="发布" onclick="sendForm(this)" style="marginleft:20px;"/>  -->
+				</form>
+		</div>
+	</div>
+	<script type="text/javascript" language="javascript">
+	
+		window.onload=function(){
+			document.onkeypress = function(event){
+				if(event.keyCode == 13){
+					sendform(document.getElementById("newsform"));
+				}
+			}
+		}
+	
+		function sendForm(obj){
+			var title = document.formdata.n_title.value;	
+			var content = document.formdata.n_content.value;
+			if(title == "" || content == ""){
+				alert("您输入的信息不完整！");
+				return false;	
+			}
+			//document.formdata.submit();
+			document.getElementById("newsform").submit();
+			//alert("");
+			return true;
+		}
+		
+        $(function(){
+        
+        	$("#pnp").hide();
+        	
+			$(document).ready(function(e) {
+				
+	        
+	        //删除数据
+	        $("#newslist").edatagrid({
+				columns:[[	
+							{field:'id',title:'ID',width:50,align:'center',sortable:true},
+							{field:'title',title:'标题',width:100,align:'center',sortable:true},
+							{field:'author',title:'作者',width:400,align:'left',sortable:true},
+							{field:'CTime',title:'时间',width:150,align:'center',sortable:true},
+							{field:'status',title:'状态',width:60,align:'center'}
+						]],
+				//url:"datagrid_data.json",
+	        	url:"../doit.do?doFrom=news&doCom=select",
+	        	onDestroy:function(index,row){
+			//	alert("");
+					var destroyUrl = "../doit.do?doFrom=news&doCom=delete";
+					$.ajax({
+						url:destroyUrl,
+						type:"POST",
+						dataType:"json",
+						data:{id:row.id},
+						beforeSend: function(){
+						//	$.messager.progress();
+						},
+						success:function(resp,status,jRh){	
+							if(resp.success && "success" == resp.msg)
+							{
+								alert("删除成功！");
+							}else{
+								alert("返回错误提示："+resp.msg);
+							}
+						},
+						error:function(){
+							alert("请求失败");	
+						}
+					});	
+				}
+	        });
+	        
+        	//创建网格数据表
+            $("#newslist").datagrid({
+            	toolbar : [{
+				            text:'发布新闻',
+				            iconCls:'icon-add',
+				            handler:function(){
+				            	$('#pndlg').dialog({    
+									title: '新闻发布',    
+									width: 700,    
+									height: 450,    
+									closed: false,    
+									cache: false, 
+									resizable: true,  
+									//href: '../welcome.html',    
+									modal: true   
+								});  
+								$("#pnp").show();
+							}
+				        },'-',{
+				            text:'删除',
+				            iconCls:'icon-cut',
+				            handler:function(row){
+				            	//var destroyUrl = "../servlet/doit?doFrom=news&doCom=delete";
+				            	$("#newslist").edatagrid('destroyRow');
+				            }
+				        },'-',{
+				            text:'保存',
+				            iconCls:'icon-save',
+				            handler:function(){
+				            		//取出选择的这一行
+				            		var row = $("#newslist").datagrid("getSelected");
+				            		alert(row.n_title);
+				            	}
+				        }],
+				
+                view: detailview,
+                title:"新闻列表",
+          		sortName:"CTtime",
+          		sortOrder:"desc",
+          		pagination:true,
+          		singleSelect:false,
+          		fitColumns:true,
+          		showPageList:false,
+          		rowStyler:function(index,row){
+          			//设置行样式
+          			if(row.n_title.length>30){
+          				return "background-color:pink;color:blue;font-weight:bold;";
+          			}
+          		},
+                detailFormatter:function(index,row){
+                    return '<div class="ddv" style="padding:5px 0;color:blue;margin:5px;"></div>';
+                },
+                onExpandRow: function(index,row){
+                    var ddv = $(this).datagrid('getRowDetail',index).find('div.ddv');
+                    ddv.panel({
+                        border:false,
+                        cache:false,
+                        href:"../doit.do?doFrom=news&doCom=selectcontent&id="+row.id,
+                        onLoad:function(){
+                            $("#newslist").datagrid('fixDetailRowHeight',index);
+                        }
+                    });
+                    $("#newslist").datagrid('fixDetailRowHeight',index);
+                }
+            });
+ 
+        });//end ready()
+        
+	});//end function
+        
+</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+
+<link rel="stylesheet" type="text/css"
+	href="js/themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="js/jquery.edatagrid.js"></script>
+		<script type="text/javascript" src="js/datagrid-groupview.js"></script>
+		<style type="text/css">
+#edi {
+	margin-left: 40px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#intrdu_save {
+	margin-left: 40px;
+	margin-top: 20px;
+	margin-bottom: 20px; 
+	display: none;
+}
+
+#upto {
+	margin-left: 20px;
+}
+
+#edit a {
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+#tocont {
+	margin-top: 10px;
+	margin-left: 30px;
+}
+
+h2 {
+	text-align: center;
+	background-color: #f3f3f3;
+}
+</style>
+
+
+		<script type="text/javascript">
+
+	
+
+	$(function(){
+		//虚函数重载
+
+		$("#intrdu_save").hide();
+		$("#edi").show();
+
+	//请求基地介绍的相关信息
+		$.ajax({
+					url:"../doit.do?doFrom=intrduction&doCom=select",
+					type:"POST",
+					dataType:"json",
+					//data:{newIntrduction:data},
+					beforeSend: function(){},
+					success:function(resp,status,jRHX){	
+						if(resp.success)
+						{
+							var json = eval('('+resp.msg+')');
+							var html = json.content;
+							//alert("ok");
+							//alert(json[0].jj_content);
+							$("#tocont").find("textarea").val(html);
+							
+						}else
+						{
+							alert("返回错误代码："+resp.msg);
+						}
+					},
+					error:function(){
+						alert("请求失败");		
+					}
+				});	
+				
+		/*
+		$.ajax({
+			url:"",
+			type:"POST",
+			dataType:"json",
+			data:({}),
+			beforeSend: function(){
+				$.messager.progress();
+			},
+			success:function(){	
+				$.messager.progress("close");
+			},
+			error:function(){
+				alert("请求失败");	
+				$.messager.progress("close");
+			}
+		});	
+		*/
+		//$("#edti").find("a").removeAttr("disabled");
+		
+		//document监听
+		$(document).ready(function(e){
+			
+			$("#intrdu_save").on("click",function(){
+				
+				var data = $(this).parent().find("textarea").val();
+				$.ajax({
+					url:"../doit.do?doFrom=intrduction&doCom=update",
+					type:"POST",
+					dataType:"json",
+					data:{newIntrduction:data},
+					beforeSend: function(){},
+					success:function(resp,status,jRHX){	
+						if(resp.success && "success" == resp.msg)
+						{
+							$(this).parent().find("textarea").attr("disabled","disabled");
+							$(this).parent().find("textarea").css("border","0px");
+							$("#intrdu_save").hide();
+							$("#edi").show();
+							alert("保存成功!");
+						}else
+						{
+							alert("返回错误代码："+resp.msg);
+						}
+					},
+					error:function(){
+						alert("请求失败");		
+					}
+				});	
+				
+			});
+			
+			$("#edi").on("click",function(e){
+				//alert("");
+				$(this).parent().find("textarea").removeAttr("disabled");
+				$(this).parent().find("textarea").css("border","1px solid #ccc");
+				$(this).hide();
+				//$("#intrdu_save").css("display","block");
+				$("#intrdu_save").show();
+			});
+		});
+		//构建可编辑表格
+		$('#teamlist').edatagrid({
+			
+			saveUrl: "../doit.do?doFrom=information&doCom=add",    
+		    updateUrl: "../doit.do?doFrom=information&doCom=update",    
+		    //destroyUrl: "../servlet/doit?doFrom=intrduction&doCom=delete" , 
+			
+			onSave:function(index,row){
+			//row 行对象
+				//alert("row.t_name="+row.t_name);
+				
+			},
+			onDestroy:function(index,row){
+			//	alert("");
+				var destroyUrl = "../doit.do?doFrom=information&doCom=delete";
+				$.ajax({
+					url:destroyUrl,
+					type:"POST",
+					dataType:"json",
+					data:{t_id:row.t_id},
+					beforeSend: function(){
+					//	$.messager.progress();
+					},
+					success:function(resp,status,jRh){	
+						if(resp.success && "success" == resp.msg)
+						{
+							alert("删除成功！");
+						}else{
+							alert("返回错误提示："+resp.msg);
+						}
+					//	$.messager.progress("close");
+					},
+					error:function(){
+						alert("请求失败");	
+					//	$.messager.progress("close");
+					}
+				});	
+			}
+				
+		});
+		
+				//反馈表格
+					$('#op_groud').datagrid({
+						title:'反馈信息统计',
+						toolbar:[{
+					            text:'Add',
+					            iconCls:'icon-add',
+					            handler:function(){alert('add')}
+						        },{
+						            text:'Cut',
+						            iconCls:'icon-cut',
+						            handler:function(){alert('cut')}
+						        },'-',{
+						            text:'Save',
+						            iconCls:'icon-save',
+						            handler:function(){alert('save')}
+						        }],
+					    singleSelect:true,
+						width:1000,
+						height:500,
+						rownumbers:true,
+						remoteSort:false,
+						nowrap:true,
+						onCollapseRow:function(){
+							alert("您要折叠");
+						},
+						fit:false,
+						fitColumns:true,
+						//请求数据地址
+						url:'../doit.do?doFrom=opinion&doCom=select',
+						columns:[[
+							{field:'id',title:'ID',width:50,align:'center',sortable:true},
+							{field:'openid',title:'openID',width:100,align:'center',sortable:true},
+							{field:'content',title:'内容',width:400,align:'left',sortable:true},
+							{field:'CTime',title:'时间',width:150,align:'center',sortable:true},
+							{field:'status',title:'状态',width:60,align:'center'}
+						]],
+						//以openID排序
+						groupField:'op_opendid',
+						view: groupview,
+						groupFormatter:function(value, rows){
+							return "用户：	"+value + ' - ' + rows.length + ' (条)';
+						}
+					});
+								
+	});
+
+</script>
+</head>
+
+<body>
+	<div class="easyui-accordion" border="false"
+		style="border:1px solid #39C;">
+		<div title="基地简介" iconCls="icon-light" selected="true"
+			style="overflow:auto;padding:10px;">
+			<div style="border:1px solid #ccc;width:80%; margin:auto;">
+				<h2>基地简介</h2>
+				<div id="tocont">
+					<p>
+						<textarea disabled="disabled" name="text"
+							style="width:90%;border:0px;" disabled="disabled">hello world!</textarea>
+						<br />
+					</p>
+				</div>
+				<a icon="icon-add" class="easyui-linkbutton" id="edi">编辑</a> <a
+					icon="icon-save" class="easyui-linkbutton" id="intrdu_save">保存</a>
+			</div>
+		</div>
+		<div title="成员信息" iconCls="icon-light"
+			style="overflow:auto;padding:10px;">
+			<div style="border:1px solid #ccc;width:95%; margin:auto;">
+				<div style="margin-bottom:10px" id="edit">
+					<a href="javascript:void(0)" class="easyui-linkbutton"
+						icon="icon-add"
+						onclick="javascript:$('#teamlist').edatagrid('addRow')">添加用户</a> <a
+						href="javascript:void(0)" class="easyui-linkbutton"
+						icon="icon-save"
+						onclick="javascript:$('#teamlist').edatagrid('saveRow')">保存用户</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton"
+						icon="icon-remove"
+						onclick="javascript:$('#teamlist').edatagrid('cancelRow')">取消编辑</a>
+					<a id="test" href="javascript:void(0)"
+						class="easyui-linkbutton" icon="icon-cancel"
+						onclick="javascript:$('#teamlist').edatagrid('destroyRow')">删除用户</a>
+				</div>
+				<table title="成员信息" id="teamlist" class="" singleSelect="true"
+					url="../doit.do?doFrom=information&doCom=select">
+					<!-- url请求json数据 -->
+					<thead>
+						<tr>
+							<th field="id" width="80" align="center">ID</th>
+							<th field="schoolId" width="100" editor="text" align="center">学号</th>
+							<th field="name" width="50" editor="text" align="center">姓名</th>
+							<th field="sexy" width="150" editor="text" align="center">性别</th>
+							<th field="birthday" width="150" editor="text" align="center">生日</th>
+							<th field="CTime" width="150" editor="text" align="center">时间</th>
+							<th field="status" width="380" editor="text"
+								align="center">状态</th>
+						</tr>
+					</thead>
+				</table>
+
+			</div>
+		</div>
+		<div title="反馈意见" iconCls="icon-light"
+			style="overflow:auto;padding:10px;">
+			<div style="">
+				<table id="op_groud">
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>

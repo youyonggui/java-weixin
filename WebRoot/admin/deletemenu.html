@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+
+<script>
+	$(function(){
+		$(document).ready(function(e) {
+			$("#token").on("click",function(){
+				$.ajax({
+					url:"../servlet/servCookie",
+					type:"get",
+					//dataType:"JSON",
+					//data:{access_token:$("#access_token").val()},
+					success:function(response,status,jpxhr){
+						//获取成功
+						$("#access_token").val(response);
+					},
+					error: function(){
+						//获取失败
+						alert("请求失败！");
+					},	
+				});
+			});
+            $("#submit").on("click",function(){
+				
+				$.ajax({
+					url:"../servlet/reqmenu?menu=delete",
+					type:"POST",
+					dataType:"JSON",
+					data:{access_token:$("#access_token").val()},
+					success:function(response,status,jpxhr){
+						//获取成功
+						alert("返回值："+response.errcode+"and"+response.errmsg);
+					},
+					error: function(){
+						//获取失败
+						alert("请求失败！");
+					},	
+				});
+				
+			});	
+        });
+		
+	});
+
+</script>
+</head>
+
+<body>
+<div id="deletemenu" class="easyui-panel" title="删除菜单结构"     
+        style="width:90%;padding:10px; margin:auto;background:#fafafa;"   
+        data-options="iconCls:'icon-edit',closable:true,    
+                collapsible:true,maximizable:true">   
+        <p><input id="access_token" type="text" name="access_token" readonly="readonly" style="width:800px; margin-right:10px; margin-bottom:0px;"/><a id="token" class="easyui-linkbutton" plain="true" icon="icon-search">获取access_token</a></p>   
+        <div>
+        	<p>删除菜单须知：</p>
+            <div>
+            	<input type="radio" name="read" value="yes">我已阅读</input>
+            	<input id="submit" type="button" name="submit" value="删除菜单" />
+            </div>
+            
+        </div> 
+	</div> 
+</body>
+</html>

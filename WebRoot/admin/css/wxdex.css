@@ -1,0 +1,21 @@
+@charset "utf-8";
+
+.easyui-propertygrid{
+	margin:auto;
+	}
+
+.pNews{
+	border:1px solid red;
+	padding:3px;
+	color:red;
+	margin-bottom:6px;
+	width:80px;
+	border-radius:4px;
+	text-align:center;
+}
+
+.pNews:hover{
+	background-color:red;
+	color:white;
+	cursor:pointer;
+}

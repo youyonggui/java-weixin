@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- 必须有这句，这是对设备的判断，否则无法实现响应式 -->
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.4.5.min.css"
+	type="text/css"></link>
+<link rel="stylesheet"
+	href="jquery.mobile/jquery.mobile.icons-1.4.5.min.css" type="text/css"></link>
+
+<script type="text/javascript" src="../admin/js/jquery.min.js"></script>
+<script type="text/javascript"
+	src="jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
+
+<title>南昌大学云计算基地</title>
+<style type="text/css">
+body {
+	top: 0px;
+	left: 0px;
+}
+
+div {
+	border: 1px solid #ccc;
+	margin:3px;
+}
+
+ul.menu li {
+	float: left;
+	list-style-type: none;
+	border: 1px solid red;
+	color: red;
+	margin: 3px;
+	padding: 3px;
+}
+
+ul.menu li:hover {
+	color: white;
+	font-weight: lighter;
+	background-color: red;
+}
+
+#more{width:70%;border:1px solid red;color:red;text-align: center;margin-top:5px;margin-left:15%;height:25px;float:left;}
+#more:hover{color:white;background-color: red;cursor: pointer;font-weight: lighter;font-size: large;}
+@media screen and (min-width:381px) {
+}
+
+.infolist img {
+	width: 2.5cm;
+	height: 3.5cm;
+}
+
+div.list {
+		width: 60%%;
+		heith: 4cm;
+		float: left;
+		margin-left:20%;
+	}
+	div.list div {
+		float: left;
+	}
+	
+
+	
+#header{padding-left:0px;}
+
+@MEDIA screen and (max-width:380px) {
+	div.list {
+		width: 100%;
+		heith: 51px;
+		float: left;
+		margin-left:0px;
+		font-size: 13px;
+	}
+	#more{margin-botton:10px;}
+	ul.menu{margin-left:0px;padding-left:0px;}
+	div.list div {
+		float: left;
+		
+	}
+	.infolist img {
+		width: 40px;
+		height: 50px;
+	}
+}
+#reload{margin-right:20px;float:right;}
+#reload:hover{background-color: #39A;border-radius:4px;}
+</style>
+<script language="javascript">
+
+	$(function(){
+		//默认头像
+		var imgdefaultURL = "images/1.png";
+		 	
+		var position = 0;	
+		var moreURL = "../clientgGet.do?from=news&action=more&position=NOWPOSITION";
+		$.ajax({			
+			url:moreURL.replace("NOWPOSITION",position),
+			type:"GET",
+			//data:{opinion:opin},
+			dataType:"JSON",
+			success:function(resp,status,jhR){
+				if(resp.success){
+				//构建json对象数组
+					alert(resp);
+					var obj = eval(resp.msg);
+					alert(obj);
+					for(var i = 0;i<obj.length;i++){
+						var imgURL = (obj[i].image == null || obj[i].image == "")?imgdefaultURL:"../"+obj[i].image;
+						var content = "【"+obj[i].title + "】" + obj[i].content.substr(0,25) + "...";
+						
+						var html = "<div class=\"list\"><div>";
+						html += "<img src=\""+imgURL+"\" /></div>";
+						html += "<a href=\"eachNew.html?id="+obj[i].id+"\">";
+						html += content+"</a></div>";
+						$(".infolist").append(html);
+					}
+					position = obj.length;
+				}else{
+					alert("返回错误提示："+resp.msg);
+				}
+
+			},
+			error:function(){
+				alert("提交失败。。");
+			}
+						
+		});
+
+		
+		$(document).ready(function(e){
+		
+			$("#more").on("click",function(){
+				$.ajax({			
+					url:moreURL.replace("NOWPOSITION",position),
+					type:"GET",
+					//data:{opinion:opin},
+					dataType:"JSON",
+					success:function(resp,status,jhR){
+						if(resp.success){
+						//构建json对象数组
+							var obj = eval(resp.msg);
+							for(var i = 0;i<obj.length;i++){
+								var imgURL = (obj[i].image == null || obj[i].image == "")?"../"+obj[i].image:imgdefaultURL;
+								var content = "【"+obj[i].title + "】" + obj[i].content.substr(0,25) + "...";
+								//alert();
+								var html = "<div class=\"list\"><div>";
+								html += "<img src=\""+imgURL+"\" /></div>";
+								html += "<a href=\"eachNew.html?id="+obj[i].id+"\">";
+								html += content+"</a></div>";
+								$(".infolist").append(html);
+							}
+							position = obj.length;
+						}else{
+							alert("返回错误提示："+resp.msg);
+						}
+		
+					},
+					error:function(){
+						alert("提交失败。。");
+					}
+								
+				});
+			});
+		});
+	});
+
+</script>
+</head>
+<body>
+	<div style="background-color: #ccc;text-align: center; font-size: 14px;top:0px;left:0px;width:100%">基地新闻</div>
+	<div data-role="header" id="header">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="index.html" data-icon="home">进入我们主页</a>
+					</li>
+					<li><a data-icon="arrow-r">校园资讯</a>
+					</li>
+					<li><a href="http://www.baidu.com" data-icon="search">百度搜索</a>
+					</li>
+				</ul>
+			</div>
+	</div>
+		
+	<div class="infolist">
+		<div class="list">
+			<div>
+				<img src="images/1.png" />
+			</div>
+			<a href="#">【推荐】免费集成极光推送SDK，让APP实现高安全、高并发的推送功能免费集成极光推送SDK，让APP实现高安全、高并发</a>
+		</div>
+	</div>
+	<div id="more">显示更多</div>
+	
+</body>
+</html>

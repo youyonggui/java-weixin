@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+<script>
+	$(function(){
+		var accesstoken;
+		$(document).ready(function(e) {
+            $("#token").on("click",function(){
+				$.ajax({
+						url:"../servlet/servCookie",
+						type:"get",
+						
+						success:function(response,status,jpxhr){
+							//获取成功
+							accesstoken = response;
+							$("#access_token").val(response);
+						},
+						error: function(){
+							//获取失败
+							alert("请求失败！");
+						},	
+					});
+				
+			});	
+			
+			$("#menu1").find("input").on("click",function(){
+				if(accesstoken == null || accesstoken == ""){
+					alert("请先获取access_token!");
+					return;
+				}
+				$.ajax({
+						url:"../servlet/reqmenu?menu=get",
+						type:"post",
+						//dataType:"JSON",
+						data:{access_token:accesstoken},
+						success:function(response,status,jpxhr){
+							//获取成功
+							$("#menu1").find("textarea").val(response);
+						},
+						error: function(){
+							//获取失败
+							alert("请求失败！");
+						},	
+					});
+				
+			});	
+			
+			$("#menu2").find("input").on("click",function(){
+				if(accesstoken == null || accesstoken == ""){
+					alert("请先获取access_token!");
+					return;
+				}
+				$.ajax({
+						url:"../servlet/reqmenu?menu=setting",
+						type:"post",
+						//dataType:"JSON",
+						data:{access_token:accesstoken},
+						success:function(response,status,jpxhr){
+							//获取成功
+							$("#menu2").find("textarea").val(response);
+						},
+						error: function(){
+							//获取失败
+							alert("请求失败！");
+						},	
+					});
+				
+			});	
+			
+        });
+		
+	});
+
+</script>
+</head>
+
+<body>
+	<p><input id="access_token" type="text" name="access_token" readonly="readonly" style="width:600px; margin-right:10px; margin-bottom:0px;"/><a id="token" class="easyui-linkbutton" plain="true" icon="icon-search">获取access_token</a></p>
+    
+	<div id="menu1" class="easyui-panel" title="菜单接口查询"     
+        style="width:800px;padding:10px; margin:auto;background:#fafafa;"   
+        data-options="iconCls:'icon-edit',closable:true,    
+                collapsible:true,maximizable:true">   
+           
+        <div>
+        	<h3>正在使用的菜单结构为：</h3>
+        	<textarea name="menulist" style="width:700px; height:400px; margin:auto"></textarea>
+            <input type="button" name="get" value="马上获取" />
+        </div> 
+	</div>  
+    <div id="menu2" class="easyui-panel" title="菜单接口配置查询"     
+        style="width:800px;padding:10px; margin:auto;background:#fafafa;"   
+        data-options="iconCls:'icon-edit',closable:true,    
+                collapsible:true,maximizable:true">    
+        <div>
+        	<h3>正在使用的菜单接口配置为：</h3>
+        	<textarea name="menuper" style="width:700px; height:400px; margin:auto"></textarea>
+            <input type="button" name="getSetting" value="马上获取" />
+        </div> 
+	</div>
+
+</body>
+</html>

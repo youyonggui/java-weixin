@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>后台管理系统</title>
+
+<link rel="stylesheet" type="text/css"
+	href="js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="css/wxind.css">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/wxind.js"></script>
+</head>
+<body class="easyui-layout" style="text-align:left">
+	<!--
+
+-->
+	<div region="north" class="north">
+		<table>
+			<tr style="width:100%">
+				<td style=" width:208px; font-size:30px;">微信|控制后台</td>
+				<td><a href="../login.html?act=off"
+					onclick="if(!confirm('你确定退出吗？')){return false;}"
+					class="easyui-linkbutton" plain="true" icon="icon-undo">退出系统</a></td>
+				<td id="myinfo" style="width:100px;margin-rigth:20px;"><a href="javascript:void(0)" id="info"><img src=""/><span style="color:blue;">我的主页</span></a></td>
+			</tr>
+		</table>
+	</div>
+	<!--西部放菜单-->
+	<div region="west" split="false" icon="icon-info" title="后台系统菜单"
+		style="width:208px;">
+
+		<div class="easyui-accordion" border="false">
+
+			<div title="微信接入" iconCls="icon-light" selected="true"
+				style="overflow:auto;padding:10px;">
+				<li><span><a
+						link="https://mp.weixin.qq.com/cgi-bin/loginpage?t=wxm2-login&lang=zh_CN">配置服务器</a></span></li>
+			</div>
+
+			<div title="自定义菜单" iconCls="icon-light" selected="true"
+				style="overflow:auto;padding:10px;">
+				<!--菜单列表-->
+				<div class="easyui-accordion" border="false">
+					<div title="菜单结构" iconCls="icon-folder" style="padding:10px;">
+						<li><span><a link="news.html">新 闻</a></span></li>
+						<li><span><a link="action.html">活 动</a></span></li>
+						<li><span><a link="intrdu.html">介 绍</a></span></li>
+					</div>
+					<div title="管理菜单" iconCls="icon-folder" style="padding:10px;">
+						<li><span><a link="getmenu.html">获取菜单</a></span></li>
+						<li><span><a link="createMenu.html">创建菜单</a></span></li>
+						<li><span><a link="deletemenu.html">删除菜单</a></span></li>
+					</div>
+				</div>
+			</div>
+
+
+			<div title="文件管理" iconCls="icon-folder" style="padding:10px;">
+				<li><span><a link="#">上传图片</a></span></li>
+				<li><span><a link="#">上传附件</a></span></li>
+				<li><span><a link="#">管理上传文件</a></span></li>
+				<li><span><a link="#">管理上传文件</a></span></li>
+			</div>
+
+		</div>
+
+	</div>
+	<div id="opt_info" border="false" region="center" title="小广告">
+		<!-- 这里是tabs-->
+		<div id="main" class="easyui-tabs" fit="true" border="false"
+			plain="true">
+
+			<div title="后台首页" style="padding:10px;">
+				<iframe frameborder="0" style="width:100%;height:100%;"
+					src="welcome.html"></iframe>
+
+			</div>
+		</div>
+	</div>
+	<div region="south" style="text-align:center">尤勇贵微信测试
+		请联系qq：2668749532</div>
+</body>
+</html>

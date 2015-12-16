@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>登陆管理系统</title>
+<link rel="stylesheet" type="text/css"
+	href="admin/js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="admin/js/themes/icon.css">
+<script type="text/javascript" src="admin/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="admin/js/jquery.easyui.min.js"></script>
+<script type="text/javascript"
+	src="admin/js/locale/easyui-lang-zh_CN.js"></script>
+<style type="text/css">
+body {
+	background-color: #F3F3F3;
+}
+
+a {
+	text-decoration: none;
+	color: black;
+}
+
+.textbox-invalid{
+	padding-right:20px;
+}
+
+form {
+	background-color: #f3f3f3;
+}
+
+input {
+	font-size: 20px;
+}
+#img{
+	margin-left:8px;
+	padding-bottom:0px;
+	margin-bottom:0px;
+}
+
+#img:hover{
+	cursor:pointer;
+}
+
+</style>
+<script language="javascript">
+	var codeSuccess = false;
+	
+	window.onload=function(){
+		document.onkeypress = function(event){
+			if(event.keyCode == 13){
+				check_f();
+			}
+		}
+	}
+	
+	function check_f() {
+		var name = document.login_f.name.value;
+		var pwd = document.login_f.password.value;
+
+		if (!name || !pwd) {
+			alert('请如入完整信息！');
+			return false;
+		}
+		if(!codeSuccess){
+			alert("验证码不正确");
+			return false;
+		}
+		document.login_f.submit();
+	}
+	
+	function changvalid(obj){
+		document.getElementById("img").src = "getCode.do?id="+Math.random();
+		return;
+	}
+	function check(obj){
+		$(function(){
+			$.ajax({
+				url:"getCode.do?code="+obj.value,
+				type:"get",
+				dataType:"json",
+				success:function(resp,status,xRH){
+					//alert(resp);
+					codeSuccess = resp.success;
+					if(codeSuccess && "success" == resp.msg){
+						$("#img").parent().find("span").html('<img src="admin/images/ok.png"/>');
+					}else{
+						$("#img").parent().find("span").html('<img src="admin/images/title.gif"/>');
+						//alert(resp);
+					}
+				},
+				error:function(){
+					alert("验证请求失败");
+				}
+			});
+		});
+		//alert("hello");
+	}
+</script>
+</head>
+<body>
+	<div style="margin:auto;width:800px;">
+
+		<div id="p" class="easyui-panel" title="微信用户||控制"
+			style="width:500px;padding:10px;background:#f3f3f3;">
+			<form action="login.do" method="post"
+				style="height:400px;top:150px;padding:10px 20px 10px 40px;border-top:5px solid red;"
+				name="login_f">
+				<img src="admin/images/key.png" />
+				<table>
+					<tr>
+						<td><input class="easyui-textbox easyui-validatebox"
+							type="text" data-options="iconCls:'icon-man'"
+							style="height:40px;line-height:30px;padding-left:20px;padding-right:15px;width:250px;"
+							required="true" name="name" /></td>
+					</tr>
+					<tr>
+						<td><input class="easyui-textbox easyui-validatebox"
+							type="password" data-options="iconCls:'icon-lock'"
+							style="padding-left:20px;padding-right:15px;height:40px;line-height:30px;width:250px;"
+							required="true" name="password" /></td>
+					</tr>
+					<tr>
+						<td><input type="text" name="valid" style="width:100px;" onblur="check(this)"/><img id="img" alt="看不清，换一张" src="getCode.do?id=3.1415926" onclick="changvalid(this)"/>
+						<a onclick="changvalid(this)" href="javaScript:void(0)">看不清，换一张</a><span></span></td>
+					</tr>
+					<tr>
+						<td><a href="#" class="easyui-linkbutton" style="margin-left:30px;" icon="icon-ok"
+							onclick="check_f()">登录</a><a href="#" class="easyui-linkbutton"
+							icon="icon-cancel" onclick="document.login_f.reset()" style="margin-left:30px;">重置</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

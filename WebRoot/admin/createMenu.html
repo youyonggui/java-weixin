@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Access-Control-Allow-Origin" content="*" />
+<title></title>
+<link rel="stylesheet" type="text/css" href="js/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/themes/icon.css">
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/ChineseCalendar.js"></script>
+<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/locale/easyui-lang-zh_CN.js"></script>
+<script>
+	$(function(){
+		var accesstoken;
+		$(document).ready(function(e) {
+		
+			$("#submit").on("click",function(){
+				if(accesstoken == null || accesstoken == ""){
+					alert("请先获取access_token!");
+					return;
+				}
+				$.ajax({
+					url:"../servlet/reqmenu?menu=create",
+					type:"get",
+					dataType:"text",
+					data:{access_token:accesstoken},
+					success:function(resp,status,xl){
+						//获取成功
+						alert(resp);
+					},
+					error: function(){
+						//获取失败
+						alert("对不起！创建失败。。。");
+					},	
+				});
+				
+			});
+		
+            $("#token").on("click",function(){
+				
+				$.ajax({
+					url:"../servlet/servCookie",
+					type:"get",
+					dataType:"text",
+					//data:{},
+					success:function(resp,status,xl){
+						//获取成功
+						accesstoken = resp;
+						$("#access_token").val(resp);
+					},
+					error: function(){
+						//获取失败
+						alert("对不起！获取token失败。。。");
+					},	
+				});
+				
+			});	
+        });
+		
+	});
+
+</script>
+</head>
+
+<body>
+<div id="createmenu" class="easyui-panel" title="创建菜单"     
+        style="width:90%;padding:10px; margin:auto;background:#fafafa;"   
+        data-options="iconCls:'icon-edit',closable:true,    
+                collapsible:true,maximizable:true">
+  
+    <p>
+      <input type="text" name="access_token" readonly="readonly" style="width:800px; margin-right:10px; margin-bottom:0px;" id="access_token" class="easyui-validatebox" data-options="required:true,validType:'text'" />
+      <a id="token" class="easyui-linkbutton" plain="true" icon="icon-search">获取access_token</a></p>
+    <div> <textarea name="menujson" style="width:800px;height:500px" class="easyui-validatebox" data-options="required:true,validType:'text'" ></textarea></div>
+    <input id="submit" type="button" name="submit" value="提交菜单" />
+  
+</div>
+</body>
+</html>
